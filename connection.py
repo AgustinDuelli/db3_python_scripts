@@ -23,15 +23,20 @@ def execute_sql_file_on_master(script_path):
     try:
         with open(script_path, 'r', encoding='utf-8') as f:
             sql_script = f.read()
-
-        statements = [
-            stmt.strip() for stmt in sql_script.split('GO')
-            if stmt.strip()
-        ]
+            
+        statements = []
+        if script_path == "./scripts_sql\INSERT_ESCUELAS.sql":
+            statements = [sql_script.removesuffix("GO")]
+        else:
+            statements = [
+                stmt.strip() for stmt in sql_script.split('GO')
+                if stmt.strip()
+            ]
 
         conn = pyodbc.connect(
             f'DRIVER={{ODBC Driver 17 for SQL Server}};'
-            f'SERVER={SERVER};DATABASE=master;UID={USERNAME};PWD={PASSWORD};'
+            f'SERVER={SERVER};DATABASE=master;UID={USERNAME};PWD={PASSWORD};',
+            autocommit=True
         )
         cursor = conn.cursor()
 
@@ -76,6 +81,9 @@ try:
             else:
                 print(f"{db} does not exist. Executing script.")
             execute_sql_file_on_master(script_path)
+            if db == "EXTERNO_ESCUELAS":
+                insert_school_path = os.path.join(SQL_FOLDER, "INSERT_ESCUELAS.sql")
+                execute_sql_file_on_master(insert_school_path)
         else:
             print(f"Missing SQL script for {db}: {script_path}")
 
