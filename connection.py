@@ -1,5 +1,6 @@
 import os
 import pyodbc
+import re
 
 SERVER = '34.176.185.229'
 USERNAME = 'sqlserver'
@@ -29,7 +30,7 @@ def execute_sql_file_on_master(script_path):
             statements = [sql_script.removesuffix("GO")]
         else:
             statements = [
-                stmt.strip() for stmt in sql_script.split('GO')
+                stmt.strip() for stmt in re.split(r'\bGO\b', sql_script)
                 if stmt.strip()
             ]
 
