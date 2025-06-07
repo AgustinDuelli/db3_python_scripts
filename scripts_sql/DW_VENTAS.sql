@@ -11,7 +11,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'DIM_Capacitacion' AND xtype = 'U')
     BEGIN
         CREATE TABLE [DIM_Capacitacion] (
-                                            [id_rango_horas] int PRIMARY KEY NOT NULL IDENTITY(1, 1),
+                                            [id_rango_horas] int PRIMARY KEY NOT NULL,
                                             [min_horas] int NOT NULL,
                                             [max_horas] int NOT NULL
         );
@@ -21,7 +21,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'DIM_Escuela' AND xtype = 'U')
     BEGIN
         CREATE TABLE [DIM_Escuela] (
-                                       [id_escuela] int PRIMARY KEY NOT NULL IDENTITY(1, 1),
+                                       [id_escuela] int PRIMARY KEY NOT NULL,
                                        [tipo_escuela] varchar(10)
         );
     END
@@ -88,6 +88,8 @@ IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'FT_Ventas' AND xtype = 'U'
     END
 GO
 
+
+
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_FT_Tiempo')
     BEGIN
         ALTER TABLE [FT_Ventas] ADD CONSTRAINT FK_FT_Tiempo FOREIGN KEY ([id_tiempo]) REFERENCES [DIM_Tiempo] ([id_tiempo]);
@@ -124,17 +126,28 @@ IF NOT EXISTS (SELECT * FROM DIM_Parque)
         INSERT INTO DIM_Parque(id_parque, region, nombre) VALUES
                                                               (1, 'NORTE', 'Parque Temático Sparkle Jujuy'),
                                                               (2, 'CENTRO-OESTE', 'Parque Temático Sparkle Buenos Aires'),
-                                                              (3, 'NORTE', 'Parque Temático Sparkle Formosa');
+                                                              (3, 'NORTE', 'Parque Temático Sparkle Formosa'),
+                                                              (999, '', '');
     END
 GO
 
 IF NOT EXISTS (SELECT * FROM DIM_Capacitacion)
     BEGIN
-        INSERT INTO DIM_Capacitacion(min_horas, max_horas) VALUES
-                                                               (0, 5),
-                                                               (6, 10),
-                                                               (11, 20),
-                                                               (21, 50),
-                                                               (51, 1000);
+        INSERT INTO DIM_Capacitacion(id_rango_horas,min_horas, max_horas) VALUES
+                                                               (1,0, 5),
+                                                               (2,6, 10),
+                                                               (3,11, 20),
+                                                               (4,21, 50),
+                                                               (5,51, 1000),
+                                                               (999,-1, -1);
+    END
+GO
+
+IF NOT EXISTS (SELECT * FROM DIM_Escuela)
+    BEGIN
+        INSERT INTO DIM_Escuela(id_escuela, tipo_escuela) VALUES
+                                                              (1, 'Publica'),
+                                                              (2, 'Privada'),
+                                                              (999, '');
     END
 GO
