@@ -80,9 +80,9 @@ IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'FT_Ventas' AND xtype = 'U'
                                      [rango_horas_capacitacion] int,
                                      [id_escuela] int,
                                      [UnidadesProductos] int,
-                                     [BrutoProductos] int,
+                                     [BrutoProductos] float,
                                      [CantidadEntradas] int,
-                                     [BrutoEntradas] int,
+                                     [BrutoEntradas] float,
                                      PRIMARY KEY ([id_tiempo], [id_parque], [id_producto], [id_empleado], [rango_horas_capacitacion], [id_escuela])
         );
     END

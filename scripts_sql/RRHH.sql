@@ -11,7 +11,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Empleado' AND xtype = 'U')
     BEGIN
         CREATE TABLE [Empleado] (
-                                    [legajo] int PRIMARY KEY NOT NULL IDENTITY(1, 1),
+                                    [legajo] int PRIMARY KEY NOT NULL IDENTITY(1001, 1),
                                     [nombre] varchar(50) NOT NULL,
                                     [apellido] varchar(50) NOT NULL,
                                     [dirección] varchar(100),

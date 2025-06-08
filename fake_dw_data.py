@@ -58,14 +58,14 @@ tiempos = [row[0] for row in cursor.fetchall()]
 cursor.execute("SELECT id_producto FROM DIM_Producto")
 productos = [row[0] for row in cursor.fetchall()]
 
-cursor.execute("SELECT id_parque FROM DIM_Parque")
-parques = [row[0] for row in cursor.fetchall() if row[0] != 999]
+cursor.execute("SELECT id_parque FROM DIM_Parque where id_parque != 999")
+parques = [row[0] for row in cursor.fetchall()]
 
 cursor.execute("SELECT nro_legajo FROM DIM_Empleado")
-empleados_ids = [row[0] for row in cursor.fetchall() if row[0] != 999]
+empleados_ids = [row[0] for row in cursor.fetchall()]
 
-rango_capacitacion = [1, 2, 3, 4, 5]
-escuelas = [1, 2]
+rango_capacitacion = [1, 2, 3, 4, 5, 999]
+escuelas = [1,1,1,1,2,2,2,2, 999]
 
 for _ in range(100):  # 100 ventas
     venta = (
@@ -76,9 +76,9 @@ for _ in range(100):  # 100 ventas
         random.choice(rango_capacitacion),
         random.choice(escuelas),
         random.randint(1, 20),  # UnidadesProductos
-        random.randint(100, 2000),  # BrutoProductos
+        round(random.uniform(100, 2000), 2),  # BrutoProductos
         random.randint(1, 10),  # CantidadEntradas
-        random.randint(100, 1000),  # BrutoEntradas
+        random.uniform(100, 1000),  # BrutoEntradas
     )
     cursor.execute("""
         INSERT INTO FT_Ventas (
