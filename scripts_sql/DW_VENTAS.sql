@@ -152,9 +152,16 @@ IF NOT EXISTS (SELECT * FROM DIM_Escuela)
     END
 GO
 
-IF NOT EXISTS (SELECT * FROM DIM_Empleado where nro_legajo == 9999)
+IF NOT EXISTS (SELECT * FROM DIM_Empleado where nro_legajo = 9999)
     BEGIN
         INSERT INTO DIM_Empleado(nro_legajo, nombre, apellido) values (9999, '', '');
     END
 GO
+
+IF NOT EXISTS (SELECT * FROM DIM_Producto where rubro = '' and subrubro = '' and descripcion = '')
+    BEGIN
+        INSERT INTO DIM_Producto(rubro, subrubro, descripcion) values ('', '', '');
+    END
+GO
+
 

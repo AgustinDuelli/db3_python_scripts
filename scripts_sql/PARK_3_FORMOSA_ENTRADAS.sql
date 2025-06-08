@@ -42,7 +42,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Empleado' AND xtype = 'U')
 BEGIN
     CREATE TABLE [Empleado] (
-        [código_empleado] INT PRIMARY KEY NOT NULL,
+        [código_empleado] INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         [nombre] VARCHAR(50) NOT NULL,
         [apellido] VARCHAR(50) NOT NULL
     );
@@ -52,7 +52,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Escuela' AND xtype = 'U')
 BEGIN
     CREATE TABLE [Escuela] (
-        [código_escuela] INT PRIMARY KEY NOT NULL,
+        [código_escuela] INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         [nombre_escuela] VARCHAR(150) NOT NULL,
         [dirección_escuela] VARCHAR(100) NOT NULL
     );
@@ -71,7 +71,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Venta' AND xtype = 'U')
 BEGIN
     CREATE TABLE [Venta] (
-        [nro_ticket] INT PRIMARY KEY NOT NULL,
+        [nro_ticket] INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         [fecha] DATE NOT NULL,
         [código_empleado] INT NOT NULL,
         [código_escuela] INT NOT NULL
