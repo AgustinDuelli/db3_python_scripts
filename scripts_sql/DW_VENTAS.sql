@@ -43,9 +43,9 @@ IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'DIM_Producto' AND xtype = 
     BEGIN
         CREATE TABLE [DIM_Producto] (
                                         [id_producto] int PRIMARY KEY NOT NULL IDENTITY(1, 1),
-                                        [rubro] varchar(40) NOT NULL,
-                                        [subrubro] varchar(40) NOT NULL,
-                                        [descripcion] varchar(40) NOT NULL
+                                        [rubro] varchar(50) NOT NULL,
+                                        [subrubro] varchar(50) NOT NULL,
+                                        [descripcion] varchar(50) NOT NULL
         );
     END
 GO
@@ -54,8 +54,8 @@ IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'DIM_Parque' AND xtype = 'U
     BEGIN
         CREATE TABLE [DIM_Parque] (
                                       [id_parque] int PRIMARY KEY NOT NULL,
-                                      [region] varchar(40) NOT NULL,
-                                      [nombre] varchar(40) NOT NULL
+                                      [region] varchar(50) NOT NULL,
+                                      [nombre] varchar(50) NOT NULL
         );
     END
 GO
@@ -151,3 +151,10 @@ IF NOT EXISTS (SELECT * FROM DIM_Escuela)
                                                               (999, '');
     END
 GO
+
+IF NOT EXISTS (SELECT * FROM DIM_Empleado where nro_legajo == 9999)
+    BEGIN
+        INSERT INTO DIM_Empleado(nro_legajo, nombre, apellido) values (9999, '', '');
+    END
+GO
+
