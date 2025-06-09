@@ -1,0 +1,54 @@
+"SET DATEFIRST 1;
+
+WITH DateSeries AS (
+    SELECT CONVERT(DATE, '" + @[User::START_DATE] + "', 103) AS [date]
+    UNION ALL
+    SELECT DATEADD(DAY, 1, [date])
+    FROM DateSeries
+    WHERE [date] < CONVERT(DATE, '" + @[User::END_DATE] + "', 103)
+),
+VentasFiltradas AS (
+    SELECT v.fecha_venta as fecha, SUM(iv.precio * iv.cantidad) as brutoVenta,
+           SUM(iv.cantidad) as cantidadVenta,
+           p.descripción as producto, sc.descripción subrubro,
+           c.descripción as rubro,
+           esc.nombre as nombre_escuela, esc.domicilio as domicilio_escuela,
+           emp.nombre as nombre_empleado, emp.apellido as apellido_empleado
+    FROM Venta v
+    LEFT JOIN Item_Venta iv on iv.numero_ticket = v.numero_ticket
+    LEFT JOIN Producto p on p.id_producto = iv.id_producto
+    LEFT JOIN Subcategoria sc on sc.id_subcategoria = p.id_subcategoria
+    LEFT JOIN Categoria c on c.id_categoria = sc.id_categoria
+    LEFT JOIN Escuela esc on esc.id_escuela = v.id_escuela
+    LEFT JOIN Empleado emp on emp.id_empleado = v.id_empleado
+    WHERE v.fecha_venta BETWEEN CONVERT(DATE, '" + @[User::START_DATE] + "', 103)
+                            AND CONVERT(DATE, '" + @[User::END_DATE] + "', 103)
+    GROUP BY v.fecha_venta, p.descripción, sc.descripción, c.descripción,
+             esc.nombre, esc.domicilio, emp.nombre, emp.apellido
+),
+DatosCombinados AS (
+    SELECT v.fecha, v.brutoVenta, v.cantidadVenta,
+           v.producto, v.subrubro, v.rubro,
+           v.nombre_escuela, v.domicilio_escuela,
+           v.nombre_empleado, v.apellido_empleado,
+           YEAR(v.fecha) AS año,
+           DATEPART(QUARTER, v.fecha) AS trimestre,
+           MONTH(v.fecha) AS mes,
+           DATEFROMPARTS(YEAR(v.fecha), MONTH(v.fecha), 1) AS primer_dia_mes,
+           ((DATEDIFF(DAY, DATEFROMPARTS(YEAR(v.fecha), MONTH(v.fecha), 1), v.fecha)
+           + DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(v.fecha), MONTH(v.fecha), 1)) - 1) / 7 + 1) AS semana
+    FROM VentasFiltradas v
+)
+SELECT producto, subrubro, rubro,
+       nombre_escuela, domicilio_escuela,
+       nombre_empleado, apellido_empleado,
+       año, trimestre, mes, semana,
+       SUM(brutoVenta) AS brutoVenta,
+       SUM(cantidadVenta) AS cantidadVenta
+FROM DatosCombinados
+GROUP BY producto, subrubro, rubro,
+         nombre_escuela, domicilio_escuela,
+         nombre_empleado, apellido_empleado,
+         año, trimestre, mes, semana
+ORDER BY año, mes, semana
+OPTION (MAXRECURSION 0);"

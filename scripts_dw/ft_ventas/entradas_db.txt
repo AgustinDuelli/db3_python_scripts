@@ -1,0 +1,77 @@
+"SET DATEFIRST 1;
+
+WITH DateSeries AS (
+    SELECT CONVERT(DATE, '" + @[User::START_DATE] + "', 103) AS [date]
+    UNION ALL
+    SELECT DATEADD(DAY, 1, [date])
+    FROM DateSeries
+    WHERE [date] < CONVERT(DATE, '" + @[User::END_DATE] + "', 103)
+),
+VentasFiltradas AS (
+    SELECT 
+        v.[fecha] as fecha,
+        SUM(iv.[cantidad_alumnos_reales] * iv.[arancel_por_alumno]) as brutoVenta,
+        SUM(iv.[cantidad_alumnos_reales]) as cantidadVenta,
+        esc.[nombre_escuela] as nombre_escuela,
+        esc.[dirección_escuela] as domicilio_escuela,
+        emp.[nombre] as nombre_empleado, 
+        emp.[apellido] as apellido_empleado
+    FROM [Venta] v
+    LEFT JOIN [Item_Venta] iv on iv.[nro_ticket] = v.[nro_ticket]
+    LEFT JOIN [Escuela] esc on esc.[código_escuela] = v.[código_escuela]
+    LEFT JOIN [Empleado] emp on emp.[código_empleado] = v.[código_empleado]
+    WHERE v.[fecha] BETWEEN CONVERT(DATE, '" + @[User::START_DATE] + "', 103) 
+                        AND CONVERT(DATE, '" + @[User::END_DATE] + "', 103)
+    GROUP BY 
+        v.[fecha], 
+        esc.[nombre_escuela], 
+        esc.[dirección_escuela],
+        emp.[nombre], 
+        emp.[apellido]
+),
+DatosCombinados AS (
+    SELECT 
+        v.fecha, 
+        v.brutoVenta, 
+        v.cantidadVenta,
+        v.nombre_escuela, 
+        v.domicilio_escuela,
+        v.nombre_empleado, 
+        v.apellido_empleado,
+        YEAR(v.fecha) AS año,
+        DATEPART(QUARTER, v.fecha) AS trimestre,
+        MONTH(v.fecha) AS mes,
+        DATEFROMPARTS(YEAR(v.fecha), MONTH(v.fecha), 1) AS primer_dia_mes,
+        ((DATEDIFF(DAY, DATEFROMPARTS(YEAR(v.fecha), MONTH(v.fecha), 1), v.fecha)
+         + DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(v.fecha), MONTH(v.fecha), 1)) - 1) / 7 + 1) AS semana
+    FROM VentasFiltradas v
+)
+SELECT
+    nombre_escuela, 
+    domicilio_escuela,
+    nombre_empleado, 
+    apellido_empleado,
+    año,
+    trimestre,
+    mes,
+    semana,
+    SUM(brutoVenta) AS brutoVenta,
+    SUM(cantidadVenta) as cantidadVenta,
+    " + (DT_WSTR, 10)@[User::DEFAULT_PRODUCTO] + " as id_producto
+FROM DatosCombinados
+GROUP BY
+    nombre_escuela, 
+    domicilio_escuela,
+    nombre_empleado, 
+    apellido_empleado,
+    año,
+    trimestre,
+    mes,
+    semana
+ORDER BY
+    año,
+    mes,
+    semana
+OPTION (MAXRECURSION 0);"
+
+
