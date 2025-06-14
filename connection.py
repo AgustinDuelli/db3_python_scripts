@@ -17,7 +17,8 @@ expected_dbs = [
     'PARK_3_FORMOSA_ENTRADAS',
     'PARK_3_FORMOSA_PRODUCTOS',
     'RRHH',
-    'EXTERNO_ESCUELAS'
+    'EXTERNO_ESCUELAS',
+    'LOG_SSIS',
 ]
 
 def execute_sql_file_on_master(script_path):
