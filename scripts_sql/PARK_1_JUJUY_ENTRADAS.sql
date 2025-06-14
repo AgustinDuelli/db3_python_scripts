@@ -100,22 +100,22 @@ END
 GO
 
 IF NOT EXISTS (
+    SELECT * FROM sys.foreign_keys WHERE name = 'FK_ItemVenta_Venta'
+)
+BEGIN
+    ALTER TABLE [Item_Venta] 
+        ADD CONSTRAINT FK_ItemVenta_Venta 
+        FOREIGN KEY ([nro_ticket]) REFERENCES [Venta] ([nro_ticket]);
+END
+GO
+
+IF NOT EXISTS (
     SELECT * FROM sys.foreign_keys WHERE name = 'FK_TelefonoEscuela_Escuela'
 )
 BEGIN
     ALTER TABLE [Telefono_escuela] 
         ADD CONSTRAINT FK_TelefonoEscuela_Escuela 
         FOREIGN KEY ([código_escuela]) REFERENCES [Escuela] ([código_escuela]);
-END
-GO
-
-IF NOT EXISTS (
-    SELECT * FROM sys.foreign_keys WHERE name = 'FK_Venta_ItemVenta'
-)
-BEGIN
-    ALTER TABLE [Venta] 
-        ADD CONSTRAINT FK_Venta_ItemVenta 
-        FOREIGN KEY ([nro_ticket]) REFERENCES [Item_venta] ([nro_ticket]);
 END
 GO
 
